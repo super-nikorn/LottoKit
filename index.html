@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>ฟอร์มกรอกชื่อ</title>
+</head>
+<body>
+  <h2>กรอกข้อมูล</h2>
+  <form id="submit-form">
+    <label>ชื่อ: <input type="text" name="name" required></label><br><br>
+    <label>นามสกุล: <input type="text" name="surname" required></label><br><br>
+    <button type="submit">ส่งข้อมูล</button>
+  </form>
+
+  <p id="status"></p>
+
+  <script>
+    const form = document.getElementById('submit-form');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const params = new URLSearchParams(formData);
+
+      try {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbx-THB3bEJI4NI3a0ZIWaRgdKTP-cWs2ZyOZy168t7rGTOqQFw7Yrg_7y5jzJP4kr8U/exec', {
+          method: 'POST',
+          body: params
+        });
+        const result = await response.text();
+        document.getElementById('status').textContent = 'ส่งข้อมูลสำเร็จ!';
+        form.reset();
+      } catch (err) {
+        document.getElementById('status').textContent = 'เกิดข้อผิดพลาด';
+      }
+    });
+  </script>
+</body>
+</html>
