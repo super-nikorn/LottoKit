@@ -1,49 +1,53 @@
+<!-- index.html -->
 <!DOCTYPE html>
-<html lang="th">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>แบบฟอร์มข้อมูลผู้ใช้</title>
+  <title>Form to Firestore</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyACvz8DwQOW_7WLzU5uvD6fpU0BI5MoZ_8",
+      authDomain: "mylogin-e355f.firebaseapp.com",
+      projectId: "mylogin-e355f",
+      storageBucket: "mylogin-e355f.appspot.com",
+      messagingSenderId: "950589957571",
+      appId: "1:950589957571:web:xxxxxxx"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.handleSubmit = async function (e) {
+      e.preventDefault();
+      const fname = document.getElementById("fname").value;
+      const lname = document.getElementById("lname").value;
+      const phone = document.getElementById("phone").value;
+      const age = document.getElementById("age").value;
+
+      try {
+        await setDoc(doc(db, "users", phone), {
+          firstName: fname,
+          lastName: lname,
+          phone: phone,
+          age: age
+        });
+        alert("บันทึกสำเร็จ");
+      } catch (err) {
+        alert("เกิดข้อผิดพลาด: " + err.message);
+      }
+    };
+  </script>
 </head>
 <body>
-  <h2>กรอกข้อมูลผู้ใช้</h2>
-  <form id="userForm">
-    <label>ชื่อ: <input type="text" id="firstName" required></label><br>
-    <label>นามสกุล: <input type="text" id="lastName" required></label><br>
-    <label>เบอร์ติดต่อ: <input type="tel" id="phone" required></label><br>
-    <label>อายุ: <input type="number" id="age" required></label><br>
-    <button type="submit">ส่งข้อมูล</button>
+  <h1>บันทึกข้อมูล</h1>
+  <form onsubmit="handleSubmit(event)">
+    <input type="text" id="fname" placeholder="ชื่อ"><br>
+    <input type="text" id="lname" placeholder="นามสกุล"><br>
+    <input type="text" id="phone" placeholder="เบอร์โทร"><br>
+    <input type="number" id="age" placeholder="อายุ"><br>
+    <button type="submit">บันทึก</button>
   </form>
-
-  <p id="responseText"></p>
-
-  <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbyDTgZUc5DCdWcs1QVwNLP74OSEpHCzqKsUNNaaqyK8L5dGh1ppuVhDVNlwFh5_prLH/exec"; // วางลิงก์ Web App จาก Apps Script
-
-    document.getElementById("userForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-
-      const data = {
-        firstName: document.getElementById("firstName").value,
-        lastName: document.getElementById("lastName").value,
-        phone: document.getElementById("phone").value,
-        age: document.getElementById("age").value
-      };
-
-      fetch(scriptURL, {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" }
-      })
-      .then(res => res.text())
-      .then(txt => {
-        document.getElementById("responseText").textContent = "ส่งข้อมูลสำเร็จแล้ว!";
-        document.getElementById("userForm").reset();
-      })
-      .catch(err => {
-        document.getElementById("responseText").textContent = "เกิดข้อผิดพลาดในการส่งข้อมูล";
-      });
-    });
-  </script>
 </body>
 </html>
